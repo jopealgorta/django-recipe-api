@@ -1,10 +1,17 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+from .. import models
+
+
+def sample_user(email='test@example.io', password='test123'):
+    """Creates a sample user"""
+    return get_user_model().objects.create_user(email, password)
+
 
 class ModelTests(TestCase):
     def test_create_user_with_email_successfully(self):
-        """Test creating a new user with an email is successfull"""
+        """Test creating a new user with an email is successful"""
         email = 'test@example.com'
         password = 'Test1234'
         user = get_user_model().objects.create_user(email=email, password=password)
@@ -28,3 +35,11 @@ class ModelTests(TestCase):
         user = get_user_model().objects.create_superuser('hola@example.io', 'test123')
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_tag_str(self):
+        """Test the tag string representation"""
+        tag = models.Tag.objects.create(
+            user=sample_user(),
+            name='Vegan'
+        )
+        self.assertEqual(str(tag), tag.name)
