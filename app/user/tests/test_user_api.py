@@ -56,7 +56,8 @@ class PublicUserApiTests(TestCase):
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        user_exists = get_user_model().objects.filter(email=payload['email']).exists()
+        user_exists = get_user_model().objects.filter(
+            email=payload['email']).exists()
 
         self.assertFalse(user_exists)
 
@@ -72,7 +73,8 @@ class PublicUserApiTests(TestCase):
     def test_create_token_invalid_credentials(self):
         """Test that token is not created due to invalid credentials"""
         create_user(email='jope@qualabs.com', password='test1234')
-        payload = {'email': 'jope@qualabs.com', 'password': 'wrong', 'name': 'Jope'}
+        payload = {'email': 'jope@qualabs.com', 'password': 'wrong',
+                   'name': 'Jope'}
 
         res = self.client.post(TOKEN_URL, payload)
         self.assertNotIn('token', res.data)
@@ -80,7 +82,8 @@ class PublicUserApiTests(TestCase):
 
     def test_create_token_no_user(self):
         """Test that token is not created is user is not created"""
-        payload = {'email': 'jope@qualabs.io', 'password': 'test1234', 'name': 'Jope'}
+        payload = {'email': 'jope@qualabs.io', 'password': 'test1234',
+                   'name': 'Jope'}
         res = self.client.post(TOKEN_URL, payload)
 
         self.assertNotIn('token', res.data)
@@ -88,7 +91,8 @@ class PublicUserApiTests(TestCase):
 
     def test_create_token_missing_field(self):
         """Test that email and password are required"""
-        res = self.client.post(TOKEN_URL, {'email': 'one', 'password': '', 'name': 'Jope'})
+        res = self.client.post(TOKEN_URL, {'email': 'one', 'password': '',
+                                           'name': 'Jope'})
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -103,7 +107,8 @@ class PrivateUserAPITests(TestCase):
     """Test API requests that requires authentication"""
 
     def setUp(self):
-        self.user = create_user(email='jope@hola.io', password='test1234', name='Jopee')
+        self.user = create_user(email='jope@hola.io', password='test1234',
+                                name='Jopee')
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 

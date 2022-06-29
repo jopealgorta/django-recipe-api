@@ -15,7 +15,8 @@ class ModelTests(TestCase):
         """Test creating a new user with an email is successful"""
         email = 'test@example.com'
         password = 'Test1234'
-        user = get_user_model().objects.create_user(email=email, password=password)
+        user = get_user_model().objects.create_user(email=email,
+                                                    password=password)
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
@@ -33,7 +34,8 @@ class ModelTests(TestCase):
             get_user_model().objects.create_user(None, 'test123')
 
     def test_create_super_user(self):
-        user = get_user_model().objects.create_superuser('hola@example.io', 'test123')
+        user = get_user_model().objects.create_superuser('hola@example.io',
+                                                         'test123')
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
@@ -47,7 +49,8 @@ class ModelTests(TestCase):
 
     def test_indredient_str(self):
         """Test the ingredient string representation"""
-        ingredient = models.Ingredient.objects.create(user=sample_user(), name='Cucumber')
+        ingredient = models.Ingredient.objects.create(user=sample_user(),
+                                                      name='Cucumber')
 
         self.assertEqual(str(ingredient), ingredient.name)
 

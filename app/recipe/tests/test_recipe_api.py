@@ -21,6 +21,7 @@ def image_upload_url(recipe_id):
     """Return URL for recipe image upload"""
     return reverse('recipe:recipe-upload-image', args=[recipe_id])
 
+
 def detail_url(recipe_id):
     """Return recipe detail URL"""
     return reverse('recipe:recipe-detail', args=[recipe_id])
@@ -49,6 +50,7 @@ def sample_recipe(user, **params):
 
 class PublicRecipesAPITests(TestCase):
     """Test unauthorized recipes API"""
+
     def setUp(self):
         self.client = APIClient()
 
@@ -63,7 +65,8 @@ class PrivateRecipesAPITests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(email='test3@example.io', password='test123')
+        self.user = get_user_model().objects.create_user(
+            email='test3@example.io', password='test123')
         self.client.force_authenticate(user=self.user)
 
     def test_retrieving_recipes(self):
@@ -80,7 +83,8 @@ class PrivateRecipesAPITests(TestCase):
 
     def test_recipes_limited_to_user(self):
         """Test that only recipes of the authenticated users are retrieved"""
-        user2 = get_user_model().objects.create_user(email='test2@example.io', password='test123')
+        user2 = get_user_model().objects.create_user(
+            email='test2@example.io', password='test123')
         sample_recipe(user=user2)
         recipe = sample_recipe(user=self.user)
 
@@ -168,7 +172,8 @@ class RecipeImageUploadTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(email='test@example.io', password='test123')
+        self.user = get_user_model().objects.create_user(
+            email='test@example.io', password='test123')
         self.client.force_authenticate(user=self.user)
         self.recipe = sample_recipe(user=self.user)
 
@@ -225,7 +230,8 @@ class RecipeImageUploadTests(TestCase):
         recipe2.ingredients.add(ingredient2)
         recipe3 = sample_recipe(user=self.user, title='Other recipe')
 
-        res = self.client.get(RECIPES_URL, {'ingredients': f'{ingredient1.id},{ingredient2.id}'})
+        ingredients = f'{ingredient1.id},{ingredient2.id}'
+        res = self.client.get(RECIPES_URL, {'ingredients': ingredients})
         serializer1 = RecipeSerializer(recipe1)
         serializer2 = RecipeSerializer(recipe2)
         serializer3 = RecipeSerializer(recipe3)

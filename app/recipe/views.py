@@ -8,18 +8,21 @@ from . import serializers
 from core.models import Tag, Ingredient, Recipe
 
 
-class BaseRecipeAttrViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+class BaseRecipeAttrViewSet(viewsets.GenericViewSet, mixins.ListModelMixin,
+                            mixins.CreateModelMixin):
     """Base class for tag and ingredient"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        assigned_only = bool(int(self.request.query_params.get('assigned_only', 0)))
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', 0)))
         queryset = self.queryset
         if assigned_only:
             queryset = queryset.filter(recipe__isnull=False)
 
-        return queryset.filter(user=self.request.user).order_by('-name').distinct()
+        user = self.request.user
+        return queryset.filter(user=user).order_by('-name').distinct()
 
     def perform_create(self, serializer):
         """Create a new tag for the authenticated user"""
@@ -30,7 +33,7 @@ class TagViewSet(BaseRecipeAttrViewSet):
     """Manage tags in the database"""
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
-    
+
 
 class IngredientViewSet(BaseRecipeAttrViewSet):
     """Manage ingredients in the database"""
@@ -59,7 +62,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if ingredients:
             ingredients_ids = self._params_to_ints(ingredients)
             queryset = queryset.filter(ingredients__id__in=ingredients_ids)
-            
+
         return queryset.filter(user=self.request.user)
 
     def get_serializer_class(self):

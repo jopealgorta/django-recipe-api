@@ -29,7 +29,8 @@ class PrivateTagsAPITests(TestCase):
     """Test the authorized user tags API"""
 
     def setUp(self):
-        self.user = get_user_model().objects.create_user('test@example.io', 'test123')
+        self.user = get_user_model().objects.create_user('test@example.io',
+                                                         'test123')
         self.client = APIClient()
         self.client.force_authenticate(self.user)
 
@@ -47,7 +48,8 @@ class PrivateTagsAPITests(TestCase):
 
     def test_tags_limited_to_user(self):
         """Test that tags returned are for the authenticated user"""
-        user2 = get_user_model().objects.create_user('test2@example.io', 'test123')
+        user2 = get_user_model().objects.create_user('test2@example.io',
+                                                     'test123')
         tag1 = Tag.objects.create(user=user2, name='Comfort Food')
         tag2 = Tag.objects.create(user=self.user, name='Expensive Food')
         res = self.client.get(TAGS_URL)
@@ -61,7 +63,8 @@ class PrivateTagsAPITests(TestCase):
         """Test creating a new tag"""
         payload = {'name': 'New tag'}
         res = self.client.post(TAGS_URL, payload)
-        exists = Tag.objects.all().filter(user=self.user, name=payload['name']).exists()
+        exists = Tag.objects.all().filter(user=self.user,
+                                          name=payload['name']).exists()
         self.assertTrue(exists)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
@@ -75,7 +78,8 @@ class PrivateTagsAPITests(TestCase):
         """Test filtering tags by those assigned to recipes"""
         tag1 = Tag.objects.create(user=self.user, name='Breakfast')
         tag2 = Tag.objects.create(user=self.user, name='Lunch')
-        recipe = Recipe.objects.create(user=self.user, title='Toasted eggs', time_minutes=10, price=5.00)
+        recipe = Recipe.objects.create(user=self.user, title='Toasted eggs',
+                                       time_minutes=10, price=5.00)
 
         recipe.tags.add(tag1)
 
@@ -90,8 +94,10 @@ class PrivateTagsAPITests(TestCase):
         """Test filtering tags by assigned returns unique items"""
         tag = Tag.objects.create(user=self.user, name='Breakfast')
         Tag.objects.create(user=self.user, name='Lunch')
-        recipe1 = Recipe.objects.create(user=self.user, title='Eggs', time_minutes=10, price=4.50)
-        recipe2 = Recipe.objects.create(user=self.user, title='Toasted Eggs', time_minutes=10, price=4.50)
+        recipe1 = Recipe.objects.create(user=self.user, title='Eggs',
+                                        time_minutes=10, price=4.50)
+        recipe2 = Recipe.objects.create(user=self.user, title='Toasted Eggs',
+                                        time_minutes=10, price=4.50)
         recipe1.tags.add(tag)
         recipe2.tags.add(tag)
 

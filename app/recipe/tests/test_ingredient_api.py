@@ -14,6 +14,7 @@ INGREDIENTS_URL = reverse('recipe:ingredient-list')
 
 class PublicIngredientsAPITests(TestCase):
     """Test the publicly available ingredients API"""
+
     def setUp(self):
         self.client = APIClient()
 
@@ -26,9 +27,11 @@ class PublicIngredientsAPITests(TestCase):
 
 class PrivateIngredientsAPITests(TestCase):
     """Test the private ingredients API"""
+
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(email='test@example.io', password='test123')
+        self.user = get_user_model().objects.create_user(
+            email='test@example.io', password='test123')
         self.client.force_authenticate(user=self.user)
 
     def test_retrieve_ingredients_list(self):
@@ -45,7 +48,8 @@ class PrivateIngredientsAPITests(TestCase):
 
     def test_ingredients_limited_to_user(self):
         """Test that the ingredients for the authenticated user are returned"""
-        user2 = get_user_model().objects.create_user(email='test2@example.io', password='test123')
+        user2 = get_user_model().objects.create_user(
+            email='test2@example.io', password='test123')
         ingredient1 = Ingredient.objects.create(user=user2, name='Cucumber')
         ingredient2 = Ingredient.objects.create(user=self.user, name='Salt')
 
@@ -61,7 +65,8 @@ class PrivateIngredientsAPITests(TestCase):
         payload = {'name': 'Vinegar'}
         res = self.client.post(INGREDIENTS_URL, payload)
 
-        exists = Ingredient.objects.filter(user=self.user, name='Vinegar').exists()
+        exists = Ingredient.objects.filter(user=self.user,
+                                           name='Vinegar').exists()
 
         self.assertTrue(exists)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -78,7 +83,8 @@ class PrivateIngredientsAPITests(TestCase):
         """Test filtering ingredients by those assigned to recipes"""
         ingredient1 = Ingredient.objects.create(user=self.user, name='Salt')
         ingredient2 = Ingredient.objects.create(user=self.user, name='Sugar')
-        recipe = Recipe.objects.create(user=self.user, title='Toasted eggs', time_minutes=10, price=5.00)
+        recipe = Recipe.objects.create(user=self.user, title='Toasted eggs',
+                                       time_minutes=10, price=5.00)
 
         recipe.ingredients.add(ingredient1)
 
@@ -93,8 +99,10 @@ class PrivateIngredientsAPITests(TestCase):
         """Test filtering ingredients by assigned returns unique items"""
         ingredient = Ingredient.objects.create(user=self.user, name='Salt')
         Ingredient.objects.create(user=self.user, name='Sugar')
-        recipe1 = Recipe.objects.create(user=self.user, title='Eggs', time_minutes=10, price=4.50)
-        recipe2 = Recipe.objects.create(user=self.user, title='Toasted Eggs', time_minutes=10, price=4.50)
+        recipe1 = Recipe.objects.create(user=self.user, title='Eggs',
+                                        time_minutes=10, price=4.50)
+        recipe2 = Recipe.objects.create(user=self.user, title='Toasted Eggs',
+                                        time_minutes=10, price=4.50)
         recipe1.ingredients.add(ingredient)
         recipe2.ingredients.add(ingredient)
 

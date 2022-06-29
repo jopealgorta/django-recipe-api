@@ -2,7 +2,8 @@ import uuid
 import os
 
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
+    PermissionsMixin
 from django.conf import settings
 
 
@@ -12,6 +13,7 @@ def recipe_image_file_path(instance, filename):
     filename = f'{uuid.uuid4()}.{ext}'
 
     return os.path.join('uploads/recipe/', filename)
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -35,7 +37,9 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Custom model that supports creating user with email instead of by username"""
+    """
+    Custom model that supports creating user with email instead of by username
+    """
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -49,7 +53,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Tag(models.Model):
     """Tag to be used for a recipe"""
     name = models.CharField(max_length=255)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -58,7 +63,8 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     """Ingredient of a certain recipe"""
     name = models.CharField(max_length=255)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -66,7 +72,8 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     """Recipe model"""
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     time_minutes = models.IntegerField()
     price = models.DecimalField(decimal_places=2, max_digits=5)
