@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 services:
     app:
         build:
@@ -17,8 +17,13 @@ services:
         depends_on:
             - db
     db:
-        image: postgres:10-alpine
+        image: postgres:13
+        volumes:
+            - dev-db-data:/var/lib/postgresql/data
         environment:
             - POSTGRES_DB=app
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=secretpassword
+
+volumes:
+    dev-db-data:
