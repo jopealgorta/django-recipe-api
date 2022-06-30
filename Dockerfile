@@ -22,4 +22,4 @@ RUN adduser -D user
 RUN chown -R user:user /vol/ && chmod -R 755 /vol/web && chmod -R +x /scripts
 USER user
 
-CMD ["sh"]
+CMD ["./run.sh"]
